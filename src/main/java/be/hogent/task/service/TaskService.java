@@ -4,6 +4,7 @@ import be.hogent.task.business.TaskEntity;
 import be.hogent.task.business.TaskRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@RestController
+@Service
 @AllArgsConstructor
 public class TaskService {
     @Autowired
@@ -23,15 +24,12 @@ public class TaskService {
     @Autowired
     private TaskRepo repo;
 
-    @GetMapping("/task/{id}")
-    public Task getById(String id) {
-        Long longId = Long.parseLong(id);
-        Optional<TaskEntity> taskEntity = repo.findById(longId);
+    public Task getById(Long id) {
+        Optional<TaskEntity> taskEntity = repo.findById(id);
         return taskEntity.map(entity -> mapper.toDTO(entity)).orElse(null);
     }
 
-    @PostMapping("/task")
-    public Task save(@RequestBody Task task) {
+    public Task save(Task task) {
         TaskEntity taskEntity = mapper.toEntity(task);
         TaskEntity savedEntity = repo.save(taskEntity);
         return mapper.toDTO(savedEntity);
